@@ -3,6 +3,7 @@ package tacos.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Taco;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,8 +48,18 @@ public class   DesignTacoController {
         return "design";
     }
 
+    /**
+     *
+     * @param design 带校验功能的实体类
+     * @param errors 校验的错误信息
+     * @return 处理正确，则返回order视图，否则返回design视图
+     */
     @PostMapping
-    public String processDesign(Taco design) {
+    public String processDesign(@Valid Taco design, Errors errors) {
+        if (errors.hasErrors()) {
+            log.info("Processing design has errors" + errors);
+            return "design";
+        }
         log.info("Processing design:" + design);
 
         return "redirect:/orders/current";
